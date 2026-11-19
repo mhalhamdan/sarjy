@@ -29,7 +29,7 @@ A voice assistant fails most often on anything recent or outside its training da
 - **Tool calls are relayed by the browser.** The model's tool requests arrive on the WebRTC data channel; the browser forwards them to the backend, which checks the session cookie and only touches that user's data. OpenAI documents this pattern for browser clients.
 - **Identity is a shared passcode plus an anonymous browser ID.** Entering the passcode creates a user and sets a signed, HttpOnly cookie. Memory belongs to that browser.
 
-`PLAN.md` records every design decision, why it was made, and what was set aside.
+`PLAN.md` records every design decision, why it was made, and what was set aside. `docs/Sarjy-User-Guide.pdf` explains how to use Sarjy and includes a three-minute demo script; it is built from `docs/USER_GUIDE.md` with `uv run scripts/build_guide.py`.
 
 ## Run it
 
@@ -96,15 +96,18 @@ Set in `.env`. Only the first four are required.
 
 ## Deploy to a VPS
 
-The app runs in Docker Compose behind an existing Caddy, which handles HTTPS.
+The app runs in Docker Compose behind an existing Caddy, which handles HTTPS. These steps assume a Hostinger VPS, where Docker Manager projects live in `/docker/<name>`, and Caddy running in a container.
 
-1. Clone the repository on the server (for example to `/srv/sarjy`) and create `.env` with production values, including `COOKIE_SECURE=true`.
-2. Add the site block from `deploy/Caddyfile.example` to Caddy's configuration, with your domain, and reload Caddy.
-3. Deploy with `ssh your-vps 'cd /srv/sarjy && sh scripts/deploy.sh'`. It pulls, rebuilds, and waits for the health check. Run it again for every later deploy.
-4. Schedule a nightly backup with cron: `15 3 * * * cd /srv/sarjy && sh scripts/backup.sh >> backups/backup.log 2>&1`.
-5. Set a monthly budget cap on the OpenAI project. It is the hard stop on spend; the per-user limits only slow abuse down.
+The image is built on the server from the source, so the repository must be cloned there. Docker Manager's "Compose from URL" fetches only the compose file and never builds, which fails with `No such image: sarjy-app:latest`.
 
-The app's port is published on the server's loopback address only, so Caddy is the only way in. Postgres is not published at all.
+1. Clone the repository into the project folder: `git clone https://github.com/mhalhamdan/sarjy.git /docker/sarjy`. If Docker Manager already created that folder, move it aside first.
+2. Create `/docker/sarjy/.env` from `.env.example` with production values, including `COOKIE_SECURE=true` and `APP_BIND=172.17.0.1`.
+3. Add the site block from `deploy/Caddyfile.example` to Caddy's configuration and reload Caddy. The site is then served at `https://<server hostname>:8000`.
+4. Deploy with `cd /docker/sarjy && sh scripts/deploy.sh`. It pulls, rebuilds, and waits for the health check. Run it again for every later deploy. The project then also shows up in Docker Manager, as it is named after the folder.
+5. Schedule a nightly backup with cron: `15 3 * * * cd /docker/sarjy && sh scripts/backup.sh >> backups/backup.log 2>&1`.
+6. Set a monthly budget cap on the OpenAI project. It is the hard stop on spend; the per-user limits only slow abuse down.
+
+The app's port is published only on the Docker bridge address, so it isn't reachable from outside the server and Caddy is the only way in. Postgres is not published at all.
 
 ## Latency
 

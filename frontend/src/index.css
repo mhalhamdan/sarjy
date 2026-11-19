@@ -402,6 +402,10 @@ button.icon:hover {
   gap: 0.5rem;
 }
 
+.memory-header button {
+  white-space: nowrap;
+}
+
 .count {
   margin-inline-start: 0.5rem;
   font-size: 0.75rem;
