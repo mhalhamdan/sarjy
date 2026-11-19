@@ -1,0 +1,12 @@
+# Add this site block to the Caddyfile on the VPS, then reload Caddy (`sudo systemctl reload caddy`).
+# Caddy obtains and renews the HTTPS certificate automatically; browsers only allow microphone
+# access over HTTPS.
+
+sarjy.example.com {
+	encode zstd gzip
+	# The app container publishes its port on the host's loopback only (see docker-compose.yml).
+	reverse_proxy 127.0.0.1:8000
+}
+
+# If Caddy itself runs in Docker, put it on a shared Docker network with the app and use:
+#   reverse_proxy app:8000
