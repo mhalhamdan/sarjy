@@ -36,5 +36,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s \
     CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3)"]
 
 # Apply migrations, then serve. Proxy headers are trusted from any address because the port is
-# only published on the host's loopback interface, where the reverse proxy is the sole client.
+# never published publicly (see APP_BIND in docker-compose.yml): only the reverse proxy reaches it.
 CMD ["sh", "-c", "alembic upgrade head && exec uvicorn app.main:create_app --factory --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips='*'"]

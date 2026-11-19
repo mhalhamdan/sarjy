@@ -23,9 +23,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # Bound to the host's loopback only: in production the reverse proxy is the way in.
+    # Never published publicly: a reverse proxy terminates TLS and forwards here. APP_BIND picks
+    # the address. Loopback (the default) suits a proxy on the host. A proxy in its own container
+    # reaches the host through the Docker bridge gateway (host.docker.internal), where loopback is
+    # invisible, so set APP_BIND=172.17.0.1 for that.
     ports:
-      - "127.0.0.1:${APP_PORT:-8000}:8000"
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-8000}:8000"
 
 volumes:
   pgdata:

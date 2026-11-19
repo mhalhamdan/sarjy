@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Deploy the latest commit on the VPS. Run from the repository checkout on the server:
-#   ssh your-vps 'cd /srv/sarjy && sh scripts/deploy.sh'
+#   cd /docker/sarjy && sh scripts/deploy.sh
 set -eu
 
 cd "$(dirname "$0")/.."
