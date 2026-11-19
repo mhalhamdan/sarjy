@@ -221,3 +221,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Database dumps from scripts/backup.sh
+backups/
+
+# Built frontend when served by a local backend
+backend/static/
