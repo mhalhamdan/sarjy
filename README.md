@@ -61,7 +61,7 @@ npm install
 npm run dev                                               # http://localhost:5173, proxies /api
 ```
 
-Checks, as run in CI:
+Checks to run before pushing:
 
 ```sh
 cd backend  && uv run ruff check . && uv run ruff format --check . && uv run pytest

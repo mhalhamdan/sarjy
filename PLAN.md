@@ -83,7 +83,7 @@ Each decision lists what was chosen, why, and what was set aside.
 - The app container runs FastAPI, which serves both the API and the built React files. The Dockerfile builds the frontend, then copies it into the Python image.
 - The existing Caddy on the VPS handles HTTPS and forwards a domain to the app. The app port is bound to the server's local address only; Postgres is not exposed.
 - Locally, `docker compose up` serves the same thing at `localhost`, where the microphone works without HTTPS.
-- Lint and tests run on every push (GitHub Actions). Deploying is one script run over SSH.
+- Lint and tests run locally before pushing; there is no CI. Deploying is one script run over SSH.
 - Nightly database dump on the VPS.
 - Spend protection: a per-user daily limit on calls started, plus a monthly budget cap on the OpenAI project.
 
